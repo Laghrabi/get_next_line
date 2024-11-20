@@ -1,92 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line1.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: claghrab <claghrab@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/18 16:31:20 by claghrab          #+#    #+#             */
-/*   Updated: 2024/11/18 16:31:24 by claghrab         ###   ########.fr       */
+/*   Created: 2024/11/20 17:44:25 by claghrab          #+#    #+#             */
+/*   Updated: 2024/11/20 17:44:28 by claghrab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*get_next_line(int fd)
-{
-	char *buffer;
-	static char *dup;
-	char *line;
-	size_t nl;
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	if (dup)
-	{
-		nl = tonl(dup, '\n');
-		if (nl)
-			return (ft_substr(dup, 0, len(dup, '\n')));
-	}
-	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buffer)
-		return (NULL);
-	nl = 0;
-	while (!nl)
-	{
-		ssize_t i = read(fd, buffer, BUFFER_SIZE);
-		if (i == 0)
-			return (NULL);
-		nl = tonl(buffer, '\n');
-		if (nl)
-		{
-			if (buffer + nl + 1 != '\0')
-			{
-				line = ft_strjoin(dup, ft_substr(buffer, 0, len(buffer, '\n')));
-				dup = ft_substr(buffer, nl + 1, BUFFER_SIZE - nl - 1);
-				return (line);
-			}
-			else
-				return (ft_strjoin(dup, buffer));
-		}
-		dup = ft_strjoin(dup, buffer);
-	}
-	return (NULL);
-}
 
-
-
-size_t	tonl(char *s, char c)
-{
-	size_t	i;
-
-	if (!s)
-		return (0);
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == c)
-			return (i);
-		i++;
-	}
-	return (0);
-}
-
-size_t	nl_func(char *s)
-{
-	size_t	i;
-
-	if (!s)
-		return (0);
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == '\0')
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-char	*ft_substr(const char *s, unsigned int start, size_t len)
+char	*ft_substr(char *s, unsigned int start, size_t len)
 {
 	size_t	sub_len;
 	size_t	i;
@@ -113,7 +40,7 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 	return (sub);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	size_t	i;
 	size_t	j;
@@ -155,16 +82,6 @@ char	*ft_strdup(const char *str)
 	new[i] = '\0';
 	return (new);
 }
-
-size_t	len(char *str, char c)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i] && str[i] != c)
-		i++;
-	return (i);
-}
 size_t	ft_strlen(const char *str)
 {
 	size_t	i;
@@ -175,6 +92,88 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
+int	tonl(char *s, char c)
+{
+	int	i;
+
+	if (!s)
+		return (-1);
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == c)
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+char    *append_to_buff(char *str, t_buff *buff)
+{
+    int i;
+
+    if (!str)
+        return (NULL);
+    i = 0;
+    while (str[i] && buff->idx < 1023 && str[i] != '\n')
+			buff->buffer[(buff->idx)++] = str[i++];
+			//append to line if the buffer is full
+	if (i == 1023)
+	{
+		buff->buffer[buff->idx] = '\0';
+		return (buff->buffer);
+	}
+	if (str[i] == '\n')
+	{
+		buff->buffer[(buff->idx)++] = str[i++];
+    	buff->buffer[buff->idx] = '\0';
+		return (buff->buffer);
+	}
+	return (NULL);
+}
+
+char	*get_next_line1(int fd)
+{
+	static char	*last;
+	char		tmp[BUFFER_SIZE + 1];
+	char		*line = NULL;
+	t_buff		buff;
+	ssize_t		i;
+
+	i = 1;
+	buff.idx = 0;
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (last)
+	{
+		line = append_to_buff(last, &buff);
+		if (tonl(last, '\n') != -1)
+		{
+			last = ft_substr(last, tonl(last, '\n') + 1, BUFFER_SIZE);
+			return (line);
+		}
+	}
+	if (!last)
+	{
+		while (i > 0)
+		{
+			i = read(fd, tmp, BUFFER_SIZE);
+			tmp[i] = '\0';
+			line = ft_strjoin(line, append_to_buff(tmp, &buff));
+			if (tonl(tmp, '\n'))
+			{
+				last = ft_substr(tmp, tonl(tmp, '\n') + 1, BUFFER_SIZE);
+				return (line);
+			}
+			else
+				return (line);
+
+		}
+		// append_to_buff(tmp, &buff);
+	}
+	return (NULL);
+}
+ 
 int	main(void)
 {
 	int		fd;
@@ -186,7 +185,7 @@ int	main(void)
 		printf("open failed\n");
 		return (0);
 	}
-	while ((buffer = get_next_line(fd)) != 0)
+	while ((buffer = get_next_line1(fd)) != 0)
 	{
 		printf("%s\n", buffer);
 		free(buffer);

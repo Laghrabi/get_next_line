@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: claghrab <claghrab@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/24 16:11:46 by claghrab          #+#    #+#             */
-/*   Updated: 2024/11/25 15:12:49 by claghrab         ###   ########.fr       */
+/*   Created: 2024/11/25 13:32:50 by claghrab          #+#    #+#             */
+/*   Updated: 2024/11/25 15:13:32 by claghrab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*append_line(char *last)
 {
@@ -60,7 +60,7 @@ char	*append_last(char *last)
 	}
 	new = malloc(sizeof(char) * (ft_strlen(last) - i));
 	if (!new)
-		return (free(last), NULL);
+		return (NULL);
 	i++;
 	while (last[i])
 		new[j++] = last[i++];
@@ -116,16 +116,16 @@ char	*mini_read(int fd, char *last)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*last;
+	static char	*last[FD_SETSIZE];
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > FD_SETSIZE)
 		return (NULL);
-	last = mini_read(fd, last);
-	if (!last)
-		return (free(last), last = NULL, NULL);
-	line = append_line(last);
-	last = append_last(last);
-	if (!last || ft_strlen(last) == 0)
-		return (free(last), last = NULL, line);
+	last[fd] = mini_read(fd, last[fd]);
+	if (!last[fd])
+		return (NULL);
+	line = append_line(last[fd]);
+	last[fd] = append_last(last[fd]);
+	if (!last[fd] || ft_strlen(last[fd]) == 0)
+		return (free(last[fd]), last[fd] = NULL, line);
 	return (line);
 }

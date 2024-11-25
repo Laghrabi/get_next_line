@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: claghrab <claghrab@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/18 16:33:43 by claghrab          #+#    #+#             */
-/*   Updated: 2024/11/24 16:16:44 by claghrab         ###   ########.fr       */
+/*   Created: 2024/11/25 13:34:10 by claghrab          #+#    #+#             */
+/*   Updated: 2024/11/25 13:34:25 by claghrab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
 # include <stdint.h>
 # include <limits.h>
+# ifndef FD_SETSIZE
+#  define FD_SETSIZE 1024
+# endif
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 1

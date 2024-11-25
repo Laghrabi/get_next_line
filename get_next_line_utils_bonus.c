@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: claghrab <claghrab@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/24 16:12:25 by claghrab          #+#    #+#             */
-/*   Updated: 2024/11/24 18:56:19 by claghrab         ###   ########.fr       */
+/*   Created: 2024/11/25 13:33:21 by claghrab          #+#    #+#             */
+/*   Updated: 2024/11/25 13:33:28 by claghrab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*join(char *s1, char *s2)
 {
@@ -30,7 +30,7 @@ char	*join(char *s1, char *s2)
 	}
 	new = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!new)
-		return (free(s1), NULL);
+		return (NULL);
 	while (s1[i])
 		new[j++] = s1[i++];
 	i = 0;
